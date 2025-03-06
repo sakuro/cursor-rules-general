@@ -1,0 +1,132 @@
+---
+description: General rules
+globs: *
+alwaysApply: true
+---
+# General rules and project guidelines
+
+# Language and communication guidelines
+- **User interaction**:
+    - Chat/explanation: Japanese (user's native language)
+    - Command output: English, except for user-facing messages
+- **Code**:
+    - Implementation: English (including comments and variable names)
+    - Planning comments: Japanese (user's native language)
+
+# Coding conventions
+
+## Programming languages
+
+### Ruby
+See [Ruby guidelines](ruby.md) for Ruby-specific conventions and best practices.
+
+### JavaScript/TypeScript
+_Coming soon_
+
+## Style guidelines
+- Indentation: 2 spaces
+- Line length: max 120 characters
+- Naming:
+    - Methods: `snake_case`
+    - Classes: `PascalCase`
+    - Constants: `SCREAMING_SNAKE_CASE`
+- Strings: Double quotes preferred, `%[...]` for complex escaping
+- Hash/object syntax: `{ key: value }`
+
+# Documentation guidelines
+- Document:
+    - Class purpose and responsibility
+    - Method inputs, outputs, and side effects
+    - Implementation intent for complex logic
+- Each language should follow its ecosystem's standard documentation format
+- Documentation must be in English
+
+# Testing
+- **Unit tests**: Individual classes and methods
+- **Integration tests**: Component interactions
+- **Mocks/stubs**: For external dependencies
+- **Fixtures**: In `spec/fixtures/` directory
+- **Coverage goal**: 90%+
+
+# Error handling
+- Error messages should be clear and helpful
+- Distinguish between recoverable and non-recoverable errors
+- Use language-specific error handling patterns and best practices
+- Document error conditions and recovery strategies
+
+# Version control guidelines
+
+## Git submodule management
+
+Initial setup after clone:
+```bash
+git submodule init
+git submodule update
+```
+
+## Message creation guidelines
+
+### Commit messages
+
+Format:
+```
+:github_emoji: Brief description
+
+Detailed changes in Markdown if necessary.
+```
+
+Common emoji prefixes:
+- `:new:` - New feature
+- `:beetle:` - Bug fix
+- `:memo:` - Documentation
+- `:hammer:` - Refactor
+- `:test_tube:` - Tests
+- `:police_officer:` - Lint & Style changes
+- `:inbox_tray:` - Merge commits
+
+### PR (pull request)
+* Title: Brief description
+* Body: Purpose and content of changes in Markdown.
+
+### Merge commits
+```
+:inbox_tray: Merge pull request #<PR_number> <PR_title>
+```
+
+# Command line operations
+
+## Git commands
+- Always use `--no-pager` for large outputs
+- Use `-F-` for reading from standard input
+- Prefer heredocs for multi-line messages
+
+```bash
+# Using heredoc (recommended)
+git commit <<EOF
+:emoji: Brief description
+
+Detailed explanation if needed
+EOF
+
+# Using -F- for standard input
+git commit -F- <<EOF
+:emoji: Brief description
+
+- Change 1
+- Change 2
+EOF
+```
+
+## GitHub CLI
+- Use `--body-file -` for PR descriptions from standard input
+- Follow established emoji prefix conventions
+
+```bash
+# Using --body-file for standard input
+gh pr create --title ":new: Add feature" --body-file - <<EOF
+Feature description
+
+- Implementation details
+- Testing notes
+EOF
+```

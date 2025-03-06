@@ -12,6 +12,10 @@ mkdir -p .cursor/rules
 git submodule add https://github.com/sakuro/cursor-rules-general.git .cursor/rules/general
 ```
 
+## Priority of Rules
+
+The rules directly under .cursor/rules take precedence over the contents of this directory .cursor/rules/general.
+
 ## Available rules
 
 :construction: Under construction :construction:

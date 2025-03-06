@@ -1,0 +1,169 @@
+---
+description: Ruby specific rules
+globs: **/*.{rb,rake}
+alwaysApply: true
+---
+# Ruby guidelines
+
+## Version
+Use Ruby 3.2 or later as it is the oldest non-EOL version as of 2025.
+- [Ruby maintenance branches](https://www.ruby-lang.org/en/downloads/branches/)
+
+## Language features
+- Pattern matching
+- Keyword arguments
+- RBS type definitions in `sig/` directory
+
+## Formatter & linter
+Use RuboCop for code style enforcement and static analysis
+
+### Configuration
+- Main configuration file: `.rubocop.yml`
+- Required extensions:
+    - `rubocop-rspec`: RSpec specific rules
+    - `rubocop-performance`: Performance optimization rules
+
+### Managing  list
+Handle temporary RuboCop violations with `.rubocop_todo.yml`
+
+#### Generation
+1. Use project's Rake task if available:
+     ```bash
+     bundle exec rake rubocop:regenerate_todo
+     ```
+
+2. If Rake task is not available, use RuboCop directly:
+     ```bash
+     bundle exec rubocop --auto-gen-config \
+                                            --no-exclude-limit \
+                                            --no-offense-counts \
+                                            --no-auto-gen-timestamp
+     ```
+     Options explanation:
+     - `--no-exclude-limit`: Include all files in exclusions
+     - `--no-offense-counts`: Omit offense count comments
+     - `--no-auto-gen-timestamp`: Omit generation timestamp for clean diffs
+
+#### Resolution strategy
+Follow these steps to systematically resolve RuboCop violations:
+
+1. Select a Cop to address from `.rubocop_todo.yml`
+
+2. Comment out the selected Cop's configuration in `.rubocop_todo.yml`
+
+3. Fix violations iteratively:
+     1. Check current violations:
+            ```bash
+            bundle exec rubocop --only TargetedCop
+            ```
+     2. Fix the reported issues in the code
+     3. Verify fixes:
+            ```bash
+            bundle exec rubocop --only TargetedCop
+            ```
+     4. Repeat steps 2-3 until no violations are reported
+
+4. Based on the resolution outcome:
+     - If fully resolved: Remove the commented configuration from `.rubocop_todo.yml`
+     - If resolution is impractical:
+         - Move the configuration to the end of `.rubocop.yml`
+         - Document the reason for exclusion in the configuration
+
+5. Move on to the next Cop and repeat the process
+
+Example of documenting exclusions in `.rubocop.yml`:
+```yaml
+# At the end of .rubocop.yml
+# Keep Cops in alphabetical order
+
+Metrics/BlockLength:
+  Exclude:
+    # Configuration files typically require long blocks
+    - 'config/routes.rb'
+    - 'config/environments/*.rb'
+    - 'lib/tasks/*.rake'
+
+Style/Documentation:
+  Exclude:
+    # Complex legacy code, needs major refactoring
+    - 'app/models/legacy_model.rb'
+    - 'app/models/another_legacy_model.rb'
+    - 'lib/legacy/*.rb'
+
+    # Third-party code, maintaining original style
+    - 'lib/external/*'
+    - 'vendor/local_gems/**/*'
+```
+
+## Documentation
+Use YARD for code documentation
+
+### Documentation style
+- Use infinitive form for verbs
+- Empty line between text and tag block
+
+### Example documentation
+```ruby
+# Short method description starting with infinitive verb
+#
+# @param name [String] name
+# @return [void]
+# @raise [ArgumentError] when name could not be found
+def foo_bar(name)
+  # Implementation...
+end
+```
+
+## Error handling
+Follow Ruby's exception handling patterns
+
+### Exception guidelines
+- Use custom exception classes (not standard Ruby exceptions)
+- Define all exceptions in the project's namespace
+- Follow Ruby's exception hierarchy conventions
+
+## Testing
+Use RSpec for testing
+
+### Common pitfalls in RSpec
+
+#### Avoid using described_class
+Always explicitly specify the target class:
+
+```ruby
+# Good
+RSpec.describe User do
+  it "creates a new user" do
+    user = User.new(name: "John")
+    # ...
+  end
+end
+
+# Bad
+RSpec.describe User do
+  it "creates a new user" do
+    user = described_class.new(name: "John")
+    # ...
+  end
+end
+```
+
+#### Prefer spies over method expectations
+Use `allow` + `have_received` combination instead of `expect` + `to_receive`:
+
+```ruby
+# Good
+it "sends a notification" do
+  notifier = instance_double(Notifier)
+  allow(notifier).to receive(:send)
+  # ... execute the code ...
+  expect(notifier).to have_received(:send).with(message)
+end
+
+# Bad
+it "sends a notification" do
+  notifier = instance_double(Notifier)
+  expect(notifier).to receive(:send).with(message)
+  # ... execute the code ...
+end
+```
