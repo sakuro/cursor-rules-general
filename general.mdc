@@ -9,6 +9,7 @@ alwaysApply: true
 - **User interaction**:
     - Chat/explanation: Japanese (user's native language)
     - Command output: English, except for user-facing messages
+    - CLI messages: Always use English when composing messages
 - **Code**:
     - Implementation: English (including comments and variable names)
     - Planning comments: Japanese (user's native language)
