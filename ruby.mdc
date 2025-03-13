@@ -1,6 +1,6 @@
 ---
 description: Ruby specific rules
-globs: **/*.{rb,rake}
+globs: **/*.rb,Rakefile,Gemfile,Guardfile
 alwaysApply: true
 ---
 # Ruby guidelines
