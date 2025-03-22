@@ -8,7 +8,7 @@ alwaysApply: true
 # Language and communication guidelines
 - **User interaction**:
     - Chat/explanation: Japanese (user's native language)
-    - Command output: English, except for user-facing messages
+    - Command output: English
     - CLI messages: Always use English when composing messages
 - **Code**:
     - Implementation: English (including comments and variable names)
@@ -23,16 +23,6 @@ See [Ruby guidelines](ruby.md) for Ruby-specific conventions and best practices.
 
 ### JavaScript/TypeScript
 _Coming soon_
-
-## Style guidelines
-- Indentation: 2 spaces
-- Line length: max 120 characters
-- Naming:
-    - Methods: `snake_case`
-    - Classes: `PascalCase`
-    - Constants: `SCREAMING_SNAKE_CASE`
-- Strings: Double quotes preferred, `%[...]` for complex escaping
-- Hash/object syntax: `{ key: value }`
 
 # Documentation guidelines
 - Document:
@@ -59,7 +49,8 @@ _Coming soon_
 
 ## Git submodule management
 
-Initial setup after clone:
+Initialize submodules if `.gitmodules` exists:
+
 ```bash
 git submodule init
 git submodule update
@@ -98,23 +89,21 @@ Common emoji prefixes:
 
 ## Git commands
 - Always use `--no-pager` for large outputs
-- Use `-F-` for reading from standard input
-- Prefer heredocs for multi-line messages
+- Use `-F` with temporary files or `-F-` with heredocs for multi-line messages
 
 ```bash
-# Using heredoc (recommended)
-git commit <<EOF
-:emoji: Brief description
+# Using temporary file
+echo ':emoji: Brief description' > /tmp/commit-message.txt
+echo '' >> /tmp/commit-message.txt # An empty line precedes if details exist
+echo 'Detailed explanation if needed' >> /tmp/commit-message.txt
+git commit -F /tmp/commit-message.txt
+rm /tmp/commit-message.txt
 
-Detailed explanation if needed
-EOF
-
-# Using -F- for standard input
+# Using heredoc
 git commit -F- <<EOF
 :emoji: Brief description
 
-- Change 1
-- Change 2
+Detailed explanation if needed
 EOF
 ```
 
@@ -123,7 +112,22 @@ EOF
 - Follow established emoji prefix conventions
 
 ```bash
-# Using --body-file for standard input
+# Using --body-file with temporary file
+echo 'Feature description' > /tmp/pr-body.txt
+echo '' >> /tmp/pr-body.txt
+echo '- Implementation details' >> /tmp/pr-body.txt
+echo '- Testing notes' >> /tmp/pr-body.txt
+gh pr create --title ":new: Add feature" --body-file /tmp/pr-body.txt
+rm /tmp/pr-body.txt
+
+gh pr create --title ":new: Add feature" --body-file - <<EOF
+Feature description
+
+- Implementation details
+- Testing notes
+EOF
+
+# Using --body-file with standard input
 gh pr create --title ":new: Add feature" --body-file - <<EOF
 Feature description
 
