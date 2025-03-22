@@ -91,10 +91,7 @@ Handle temporary RuboCop violations with `.rubocop_todo.yml`
 
 2. If Rake task is not available, use RuboCop directly:
      ```bash
-     bundle exec rubocop --auto-gen-config \
-                                            --no-exclude-limit \
-                                            --no-offense-counts \
-                                            --no-auto-gen-timestamp
+     bundle exec rubocop --auto-gen-config --no-exclude-limit --no-offense-counts --no-auto-gen-timestamp
      ```
      Options explanation:
      - `--no-exclude-limit`: Include all files in exclusions
@@ -104,29 +101,32 @@ Handle temporary RuboCop violations with `.rubocop_todo.yml`
 #### Resolution strategy
 Follow these steps to systematically resolve RuboCop violations:
 
+Repeat following steps for each vioration.
+
 1. Select a Cop to address from `.rubocop_todo.yml`
-
 2. Comment out the selected Cop's configuration in `.rubocop_todo.yml`
-
-3. Fix violations iteratively:
-     1. Check current violations:
-            ```bash
-            bundle exec rubocop --only TargetedCop
-            ```
-     2. Fix the reported issues in the code
-     3. Verify fixes:
-            ```bash
-            bundle exec rubocop --only TargetedCop
-            ```
-     4. Repeat steps 2-3 until no violations are reported
-
-4. Based on the resolution outcome:
-     - If fully resolved: Remove the commented configuration from `.rubocop_todo.yml`
-     - If resolution is impractical:
-         - Move the configuration to the end of `.rubocop.yml`
-         - Document the reason for exclusion in the configuration
-
-5. Move on to the next Cop and repeat the process
+   Without commenting out, following steps will not work.
+3. Check current violations:
+   ```bash
+   bundle exec rubocop --only TargetedCop
+   ```
+4. Fix the reported issues in the code
+5. Verify fixes:
+   ```bash
+   bundle exec rubocop --only TargetedCop
+   ```
+6. Ensure rspec is not broken:
+   ```bash
+   bundle exec rspec
+   ```
+7. Based on the resolution outcome:
+   - If fully resolved: Remove the commented configuration from `.rubocop_todo.yml`
+   - If resolution is impractical:
+     - Move the configuration to the end of `.rubocop.yml`
+     - Document the reason for exclusion in the configuration
+8. Commit the fix
+   Do not include `.rubocop_todo.yml` in this commit
+9. Regenerate `.rubocop_todo.yml` to wipe out other Cops that would be resolved in the last iteration
 
 Example of documenting exclusions in `.rubocop.yml`:
 ```yaml
