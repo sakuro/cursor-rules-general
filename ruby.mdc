@@ -14,6 +14,63 @@ Use Ruby 3.2 or later as it is the oldest non-EOL version as of 2025.
 - Keyword arguments
 - RBS type definitions in `sig/` directory
 
+## Method Visibility Guidelines
+
+### Individual method visibility declaration
+
+Always declare method visibility for each method individually:
+
+```ruby
+# Good
+private def internal_method
+  # implementation
+end
+
+# Bad
+private
+
+def internal_method
+  # implementation
+end
+```
+
+### Benefits
+
+This approach provides several advantages:
+
+1. **Visibility at a glance**
+   - Method visibility is immediately apparent when reading the method
+   - No need to scan upwards for visibility blocks
+
+2. **Maintainability**
+   - Easier to move methods between different parts of the file
+   - Reduces risk of accidental visibility changes
+   - Maintains consistent indentation
+
+3. **Refactoring safety**
+   - Moving methods doesn't affect other methods' visibility
+   - Cut-and-paste operations preserve method visibility
+
+### Example implementation
+
+```ruby
+class Example
+  def public_method
+    # This is a public method
+  end
+
+  private def helper_method
+    # This is a private method
+  end
+
+  private attr_reader :name
+
+  protected def shared_method
+    # This is a protected method
+  end
+end
+```
+
 ## Formatter & linter
 Use RuboCop for code style enforcement and static analysis
 
